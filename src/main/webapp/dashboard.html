@@ -401,16 +401,11 @@
       </div>
 
       <div class="right-col">
+        
         <div>
           <div class="rc-title">Mood check-in <span>today</span></div>
           <div class="mood-chips">
-            <span class="mood-chip" id="mood-Tired">Tired</span>
-            <span class="mood-chip" id="mood-Okay">Okay</span>
-            <span class="mood-chip" id="mood-Good">Good</span>
-            <span class="mood-chip" id="mood-Focused">Focused</span>
-            <span class="mood-chip" id="mood-Stressed">Stressed</span>
-          </div>
-          <div class="mood-insight" id="mood-insight-box"></div>
+            </div>
         </div>
 
         <div>
@@ -420,20 +415,26 @@
 
         <div>
           <div class="rc-title">Wellness <span>today</span></div>
-          <div class="well-row">
-            <span class="well-label">Sleep</span>
-            <div class="well-bar"><div class="well-fill" style="width:72%;background:#EF9F27;"></div></div>
-            <span class="well-val">6.5h</span>
+          <div class="well-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span class="well-label" style="width:50px;">Sleep</span>
+            <div class="well-bar" style="flex:1; background:#1a1a1a; height:6px; border-radius:3px; margin:0 10px;"><div class="well-fill" style="width:72%; background:#EF9F27; height:100%; border-radius:3px;"></div></div>
+            <span class="well-val" style="font-size:12px;">6.5h</span>
           </div>
-          <div class="well-row">
-            <span class="well-label">Water</span>
-            <div class="well-bar"><div class="well-fill" style="width:60%;background:#1D9E75;"></div></div>
-            <span class="well-val">1.2L</span>
+
+          <div class="well-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span class="well-label" style="width:50px;">Water</span>
+            <button onclick="updateMetric('water', -0.25)" style="background:#222; border:0; color:#fff; padding:2px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">-</button>
+            <div class="well-bar" style="flex:1; background:#1a1a1a; height:6px; border-radius:3px; margin:0 10px;"><div class="well-fill" style="width:0%; background:#1D9E75; height:100%; border-radius:3px;"></div></div>
+            <button onclick="updateMetric('water', 0.25)" style="background:#222; border:0; color:#fff; padding:2px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">+</button>
+            <span class="well-val" style="font-size:12px; width:45px; text-align:right;">0.00L</span>
           </div>
-          <div class="well-row">
-            <span class="well-label">Meals</span>
-            <div class="well-bar"><div class="well-fill" style="width:66%;background:#7F77DD;"></div></div>
-            <span class="well-val">2/3</span>
+
+          <div class="well-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+            <span class="well-label" style="width:50px;">Meals</span>
+            <button onclick="updateMetric('meals', -1)" style="background:#222; border:0; color:#fff; padding:2px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">-</button>
+            <div class="well-bar" style="flex:1; background:#1a1a1a; height:6px; border-radius:3px; margin:0 10px;"><div class="well-fill" style="width:0%; background:#7F77DD; height:100%; border-radius:3px;"></div></div>
+            <button onclick="updateMetric('meals', 1)" style="background:#222; border:0; color:#fff; padding:2px 8px; border-radius:4px; cursor:pointer; font-weight:bold;">+</button>
+            <span class="well-val" style="font-size:12px; width:45px; text-align:right;">0/3</span>
           </div>
         </div>
       </div>
@@ -459,6 +460,9 @@
 </div>
 
 <script>
+// ==========================================
+// 1. APPLICATION ENGINE STATE
+// ==========================================
 let appData = {
   userInfo: { full_name: "Loading...", major: "---", year: "-" },
   currentMood: "Okay",
@@ -470,32 +474,56 @@ let appData = {
   schedule: {}
 };
 
+// ==========================================
+// 2. CORE DATABASE SYNCHRONIZER
+// ==========================================
 function loadDashboardFromDatabase() {
   fetch('loginRelated/get_dashboard.php')
-    .then(res => res.json())
+    .then(res => {
+      if (!res.ok) throw new Error("Server communication broken.");
+      return res.json();
+    })
     .then(data => {
-      appData.userInfo = data.userInfo || { full_name: "User Account", major: "General Studies", year: "1" };
+      if (data.error) {
+        window.location.href = "loginRelated/login.php";
+        return;
+      }
+
+      // Map incoming database values safely into application memory state
+      appData.userInfo = data.userInfo || { full_name: "User Account", major: "CompSci", year: "2" };
       appData.currentMood = data.currentMood || "Okay";
-      appData.wellnessScore = data.wellnessScore !== undefined ? parseInt(data.wellnessScore) : 50;
+      appData.wellnessScore = data.wellnessScore !== undefined ? parseInt(data.wellnessScore) : 0;
       appData.waterAmount = data.waterAmount !== undefined ? parseFloat(data.waterAmount) : 0.0;
       appData.mealsEaten = data.mealsEaten !== undefined ? parseInt(data.mealsEaten) : 0;
       appData.totalMeals = data.totalMeals || 3;
       appData.tasks = data.tasks || [];
       appData.schedule = data.schedule || {};
 
-      // Populate Elements
+      // Sync Profile Text
       document.querySelector('.nav-name').innerText = appData.userInfo.full_name;
       document.querySelector('.nav-sub').innerText = `Year ${appData.userInfo.year} · ${appData.userInfo.major}`;
       
-      document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('sel'));
-      const activeMoodChip = document.getElementById(`mood-${appData.currentMood}`);
-      if (activeMoodChip) activeMoodChip.classList.add('sel');
+      // Sync Sidebar Task Notification Badge
+      const pendingCount = appData.tasks.filter(t => t.status === "pending").length;
+      const sidebarBadge = document.querySelector('.nav-item [class*="badge"], .nav-badge.red');
+      if (sidebarBadge) sidebarBadge.innerText = pendingCount;
+
+      // Sync Mood Chip Highlight Positions
+      document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('sel', 'active'));
+      document.querySelectorAll('.mood-chip').forEach(chip => {
+        if (chip.innerText.trim() === appData.currentMood) {
+          chip.classList.add('sel'); // Adapts to your CSS naming conventions
+        }
+      });
 
       renderAll();
     })
-    .catch(err => console.error("Frontend syncer caught error:", err));
+    .catch(err => console.error("Database initialization aborted:", err));
 }
 
+// ==========================================
+// 3. GRAPHICAL USER INTERFACE RENDERING PIPELINE
+// ==========================================
 function renderAll() {
   renderTimeline();
   renderTasks();
@@ -507,16 +535,20 @@ function renderTimeline() {
   const container = document.getElementById("timeline-container");
   if (!container) return;
   
+  if (Object.keys(appData.schedule).length === 0) {
+    container.innerHTML = `<div style="font-size:12px; color:#666; padding:20px; text-align:center;">No events logged today.</div>`;
+    return;
+  }
+
   container.innerHTML = Object.keys(appData.schedule).map(hour => {
     const slot = appData.schedule[hour];
     return `
-      <div class="tl-hour">
-        <span class="tl-time">${hour}</span>
-        <div class="tl-line"></div>
-        <div class="tl-slot">
-          <div class="tl-block ${slot.type}">
-            <div class="tl-block-name">${slot.name}</div>
-            ${slot.sub ? `<div class="tl-block-sub">${slot.sub}</div>` : ""}
+      <div class="tl-hour" style="position:relative; margin-bottom:15px;">
+        <span class="tl-time" style="width:50px; display:inline-block; font-size:12px; color:#666;">${hour}</span>
+        <div class="tl-slot" style="display:inline-block; width:calc(100% - 60px); vertical-align:top;">
+          <div class="tl-block ${slot.type || 'free'}" style="padding:12px; border-radius:8px; background:${slot.type === 'class' ? '#1f1b40' : '#141414'}; border-left:4px solid ${slot.type === 'class' ? '#7F77DD' : '#333'};">
+            <div class="tl-block-name" style="font-weight:600; font-size:13px; color:${slot.type === 'class' ? '#9d95ff' : '#fff'};">${slot.name}</div>
+            ${slot.sub ? `<div class="tl-block-sub" style="font-size:11px; color:#888; margin-top:2px;">${slot.sub}</div>` : ""}
           </div>
         </div>
       </div>`;
@@ -527,59 +559,91 @@ function renderTasks() {
   const container = document.getElementById("tasks-container");
   if (!container) return;
   
+  if (appData.tasks.length === 0) {
+    container.innerHTML = `<div style="font-size:12px; color:#666; padding:10px 0;">All caught up!</div>`;
+    return;
+  }
+
   container.innerHTML = appData.tasks.map(task => {
     const isDone = task.status === "done";
+    let tagStyle = "background:#2c1e15; color:#EF9F27;"; // Default Amber
+    if (isDone) tagStyle = "background:#122b20; color:#1D9E75;";
+    else if (task.tag && (task.tag.includes("Urgent") || task.tag.includes("days"))) tagStyle = "background:#2d1919; color:#ff5c5c;";
+
     return `
-      <div class="task-row" data-id="${task.id}" style="cursor:pointer;">
-        <div class="tchk ${isDone ? 'done' : ''}">${isDone ? '✓' : ''}</div>
-        <span class="tname ${isDone ? 'done' : ''}">${task.name}</span>
-        <span class="ttag ${isDone ? 'green' : 'amber'}">${task.tag}</span>
+      <div class="task-row" data-id="${task.id}" style="display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid #1f1f1f;">
+        <div style="display:flex; align-items:center; gap:10px; flex:1;">
+          <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTaskStatus(${task.id}, this.checked)" style="accent-color:#534AB7; cursor:pointer; width:16px; height:16px;">
+          <span class="tname" style="font-size:13px; color:${isDone ? '#555' : '#fff'}; text-decoration:${isDone ? 'line-through' : 'none'};">${task.name}</span>
+        </div>
+        <span class="ttag" style="font-size:11px; padding:3px 8px; border-radius:12px; ${tagStyle}">${task.tag || 'Active'}</span>
       </div>`;
   }).join('');
 }
 
 function renderStats() {
   const pendingCount = appData.tasks.filter(t => t.status === "pending").length;
-  if (document.getElementById("stat-tasks-due")) document.getElementById("stat-tasks-due").innerText = pendingCount;
-  if (document.getElementById("stat-wellness-score")) document.getElementById("stat-wellness-score").innerText = `${appData.wellnessScore}%`;
+  
+  const tasksDueElement = document.getElementById("stat-tasks-due");
+  const wellnessNumElement = document.getElementById("stat-wellness-score");
+  const nextDeadlineElement = document.getElementById("stat-next-deadline");
+  const freeTimeElement = document.getElementById("stat-free-time");
+  
+  if (tasksDueElement) tasksDueElement.innerText = pendingCount;
+  if (wellnessNumElement) wellnessNumElement.innerText = `${appData.wellnessScore}%`;
+  
+  if (nextDeadlineElement) {
+    const urgentTasks = appData.tasks.filter(t => t.status === "pending");
+    nextDeadlineElement.innerText = urgentTasks.length > 0 ? urgentTasks[0].name : "None";
+  }
+
+  if (freeTimeElement) {
+    let freeHours = 0;
+    Object.values(appData.schedule).forEach(slot => { if(slot.type === 'free') freeHours += 2; });
+    freeTimeElement.innerText = `${freeHours || 4}h`;
+  }
 }
 
 function renderWellnessMetrics() {
-  // Update Water DOM Elements
-  const waterVal = document.querySelector('.well-row:nth-of-type(2) .well-val');
-  const waterBar = document.querySelector('.well-row:nth-of-type(2) .well-fill');
-  if (waterVal && waterBar) {
-    waterVal.innerText = `${appData.waterAmount.toFixed(2)}L`;
-    waterBar.style.width = `${Math.min((appData.waterAmount / 3.0) * 100, 100)}%`;
-  }
+  // 1. Render Hydration Text & Progress Width Indicators
+  const waterValEl = document.querySelector('.well-row:nth-of-type(2) .well-val');
+  const waterBarEl = document.querySelector('.well-row:nth-of-type(2) .well-fill');
+  if (waterValEl) waterValEl.innerText = `${appData.waterAmount.toFixed(2)}L`;
+  if (waterBarEl) waterBarEl.style.width = `${Math.min((appData.waterAmount / 3.0) * 100, 100)}%`;
 
-  // Update Meal DOM Elements
-  const mealVal = document.querySelector('.well-row:nth-of-type(3) .well-val');
-  const mealBar = document.querySelector('.well-row:nth-of-type(3) .well-fill');
-  if (mealVal && mealBar) {
-    mealVal.innerText = `${appData.mealsEaten}/${appData.totalMeals}`;
-    mealBar.style.width = `${(appData.mealsEaten / appData.totalMeals) * 100}%`;
-  }
+  // 2. Render Nutritional Dietary Text & Progress Width Indicators
+  const mealValEl = document.querySelector('.well-row:nth-of-type(3) .well-val');
+  const mealBarEl = document.querySelector('.well-row:nth-of-type(3) .well-fill');
+  if (mealValEl) mealValEl.innerText = `${appData.mealsEaten}/${appData.totalMeals}`;
+  if (mealBarEl) mealBarEl.style.width = `${(appData.mealsEaten / appData.totalMeals) * 100}%`;
 }
 
-// Global Custom click actions to execute updates directly to your database logs
+// ==========================================
+// 4. ACTION CONTROLLERS & DATA DISPATCHERS
+// ==========================================
 function updateMetric(type, value) {
   fetch('loginRelated/save_wellness.php', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: type, value: value })
   })
+  .then(res => res.json())
   .then(() => loadDashboardFromDatabase());
 }
 
-// Bind Button UI Event Handlers
+function toggleTaskStatus(taskId, isChecked) {
+  fetch('loginRelated/save_wellness.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: 'toggle_task', id: taskId, status: isChecked ? 'done' : 'pending' })
+  })
+  .then(() => loadDashboardFromDatabase());
+}
+
+// Attach event listeners seamlessly to your static HTML layout elements
 document.querySelectorAll('.mood-chip').forEach(chip => {
   chip.onclick = () => updateMetric('mood', chip.innerText.trim());
 });
-
-// To hook your UI plus/minus buttons up seamlessly, inject these selectors inside your HTML markup layout structure
-// For Water Buttons: add onclick="updateMetric('water', 0.25)" or onclick="updateMetric('water', -0.25)"
-// For Meal Buttons: add onclick="updateMetric('meals', 1)" or onclick="updateMetric('meals', -1)"
 
 // ==========================================
 // SIDEBAR NAVIGATION SCREEN MANAGER
@@ -599,6 +663,7 @@ document.querySelectorAll('.nav-item').forEach(btn => {
   };
 });
 
+// Fire runtime script loop
 loadDashboardFromDatabase();
 </script>
 
