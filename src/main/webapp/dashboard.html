@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>UNIPULSE — Dashboard</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #ffffff;
+    --bg-2: #f7f7f5;
+    --bg-3: #f1efe8;
+    --text-1: #1a1a18;
+    --text-2: #5f5e5a;
+    --text-3: #b4b2a9;
+    --border: rgba(0,0,0,0.12);
+    --border-2: rgba(0,0,0,0.22);
+    --purple-50: #EEEDFE;
+    --purple-200: #AFA9EC;
+    --purple-400: #7F77DD;
+    --purple-600: #534AB7;
+    --purple-800: #3C3489;
+    --teal-50: #E1F5EE;
+    --teal-400: #1D9E75;
+    --teal-600: #0F6E56;
+    --amber-50: #FAEEDA;
+    --amber-400: #EF9F27;
+    --amber-800: #854F0B;
+    --red-50: #FCEBEB;
+    --red-400: #E24B4A;
+    --red-600: #A32D2D;
+    --green-50: #E1F5EE;
+    --green-600: #0F6E56;
+    --r-md: 8px;
+    --r-lg: 12px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1a;
+      --bg-2: #242422;
+      --bg-3: #2c2c2a;
+      --text-1: #f1efe8;
+      --text-2: #b4b2a9;
+      --text-3: #5f5e5a;
+      --border: rgba(255,255,255,0.10);
+      --border-2: rgba(255,255,255,0.18);
+    }
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    background: var(--bg-3);
+    color: var(--text-1);
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+
+  /* ── top bar ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+  .wordmark {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    color: var(--text-3);
+  }
+  .wordmark b { color: var(--text-1); font-weight: 500; }
+  .hright { display: flex; align-items: center; gap: 10px; }
+  .date-pill {
+    font-size: 12px;
+    color: var(--text-2);
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    background: var(--bg);
+  }
+  .notif-btn {
+    width: 28px; height: 28px;
+    border-radius: var(--r-md);
+    border: 0.5px solid var(--border);
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: var(--text-2);
+  }
+
+  /* ── main shell ── */
+  .body-grid {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    border: 0.5px solid var(--border);
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* ── sidebar ── */
+  .sidenav {
+    border-right: 0.5px solid var(--border);
+    padding: 16px 0;
+    background: var(--bg);
+  }
+  .nav-profile {
+    padding: 0 16px 14px;
+    border-bottom: 0.5px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .av {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--purple-50);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 500; color: var(--purple-600);
+    margin-bottom: 8px;
+  }
+  .nav-name { font-size: 13px; font-weight: 500; color: var(--text-1); }
+  .nav-sub  { font-size: 11px; color: var(--text-3); }
+
+  .nav-sec-label {
+    display: block;
+    font-size: 10px;
+    color: var(--text-3);
+    letter-spacing: 0.8px;
+    padding: 8px 16px 3px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px;
+    margin: 0 6px;
+    border-radius: var(--r-md);
+    font-size: 12px;
+    color: var(--text-2);
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .nav-item:hover { background: var(--bg-2); }
+  .nav-item.active { background: var(--purple-50); color: var(--purple-600); font-weight: 500; }
+  .nav-item i { font-size: 15px; }
+  .nav-badge {
+    margin-left: auto;
+    font-size: 10px;
+    padding: 1px 7px;
+    border-radius: 20px;
+  }
+  .nav-badge.red { background: var(--red-50); color: var(--red-600); }
+  .nav-badge.green { background: var(--green-50); color: var(--green-600); }
+
+  /* ── stat strip ── */
+  .main { background: var(--bg); }
+  .stat-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-bottom: 0.5px solid var(--border);
+  }
+  .stat {
+    padding: 14px 16px;
+    border-right: 0.5px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-lbl { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
+  .stat-num { font-size: 20px; font-weight: 500; color: var(--text-1); }
+  .stat-note { font-size: 11px; color: var(--text-2); margin-top: 2px; }
+  .stat-note.red { color: var(--red-600); }
+  .stat-note.green { color: var(--teal-600); }
+
+  /* ── two-col body ── */
+  .main-body { display: grid; grid-template-columns: 1fr 220px; }
+
+  /* ── timeline ── */
+  .timeline-area {
+    border-right: 0.5px solid var(--border);
+    padding: 16px;
+  }
+  .tl-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .tl-title { font-size: 13px; font-weight: 500; color: var(--text-1); }
+  .tl-days { display: flex; gap: 4px; }
+  .tl-day {
+    font-size: 11px; padding: 3px 10px; border-radius: 20px;
+    border: 0.5px solid var(--border); color: var(--text-2);
+    cursor: pointer; background: transparent; transition: background 0.12s;
+  }
+  .tl-day:hover { background: var(--bg-2); }
+  .tl-day.active {
+    background: var(--purple-50);
+    border-color: var(--purple-200);
+    color: var(--purple-600);
+    font-weight: 500;
+  }
+
+  .timeline { display: flex; flex-direction: column; gap: 2px; }
+
+  .tl-hour { display: flex; align-items: flex-start; gap: 10px; min-height: 36px; }
+  .tl-time {
+    font-size: 10px; color: var(--text-3);
+    width: 32px; padding-top: 4px; text-align: right; flex-shrink: 0;
+  }
+  .tl-line {
+    width: 0.5px; background: var(--border);
+    align-self: stretch; flex-shrink: 0; margin-top: 8px;
+  }
+  .tl-slot { flex: 1; display: flex; gap: 4px; align-items: flex-start; padding: 2px 0; }
+  .tl-block {
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px; font-weight: 500; flex: 1;
+  }
+  .tl-block.class {
+    background: var(--purple-50); color: var(--purple-600);
+    border-left: 2px solid var(--purple-400); border-radius: 0 6px 6px 0;
+  }
+  .tl-block.study {
+    background: var(--amber-50); color: var(--amber-800);
+    border-left: 2px solid var(--amber-400); border-radius: 0 6px 6px 0;
+  }
+  .tl-block.free {
+    background: var(--bg-2); color: var(--text-2);
+    border: 0.5px dashed var(--border-2); border-radius: 6px;
+  }
+  .tl-block.test {
+    background: var(--red-50); color: var(--red-600);
+    border-left: 2px solid var(--red-400); border-radius: 0 6px 6px 0;
+  }
+  .tl-block.break {
+    background: var(--teal-50); color: var(--teal-600);
+    border-left: 2px solid var(--teal-400); border-radius: 0 6px 6px 0;
+  }
+  .tl-block-name { font-weight: 500; }
+  .tl-block-sub { font-size: 10px; opacity: 0.75; margin-top: 1px; }
+
+  .tl-now { display: flex; align-items: center; gap: 10px; margin: 2px 0; }
+  .tl-now-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red-400); flex-shrink: 0; margin-left: 28px;
+  }
+  .tl-now-line { flex: 1; height: 0.5px; background: var(--red-400); }
+  .tl-now-label { font-size: 10px; color: var(--red-600); white-space: nowrap; }
+
+  /* ── right column ── */
+  .right-col { padding: 16px; display: flex; flex-direction: column; gap: 16px; }
+  .rc-title {
+    font-size: 12px; font-weight: 500; color: var(--text-1);
+    margin-bottom: 8px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .rc-title span { font-size: 11px; font-weight: 400; color: var(--text-3); }
+
+  /* mood */
+  .mood-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 7px; }
+  .mood-chip {
+    font-size: 11px; padding: 4px 10px; border-radius: 20px;
+    border: 0.5px solid var(--border); color: var(--text-2);
+    cursor: pointer; background: var(--bg-2);
+    transition: background 0.12s;
+  }
+  .mood-chip:hover { background: var(--purple-50); border-color: var(--purple-200); color: var(--purple-600); }
+  .mood-chip.sel { background: var(--purple-50); border-color: var(--purple-200); color: var(--purple-600); }
+  .mood-insight {
+    font-size: 11px; color: var(--text-2);
+    background: var(--bg-2); border-radius: var(--r-md);
+    padding: 7px 10px; line-height: 1.5;
+  }
+
+  /* tasks */
+  .task-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 5px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .task-row:last-of-type { border-bottom: none; }
+  .tchk {
+    width: 14px; height: 14px; border-radius: 4px;
+    border: 1px solid var(--border-2); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tchk.done { background: var(--teal-400); border-color: var(--teal-400); }
+  .tchk.done i { font-size: 9px; color: #fff; }
+  .tname { font-size: 12px; flex: 1; color: var(--text-1); }
+  .tname.done { text-decoration: line-through; color: var(--text-3); }
+  .ttag { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
+  .ttag.red    { background: var(--red-50);   color: var(--red-600);   }
+  .ttag.amber  { background: var(--amber-50); color: var(--amber-800); }
+  .ttag.green  { background: var(--green-50); color: var(--green-600); }
+
+  /* wellness */
+  .well-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
+  .well-label { font-size: 11px; color: var(--text-2); width: 48px; flex-shrink: 0; }
+  .well-bar {
+    flex: 1; height: 4px; background: var(--bg-2);
+    border-radius: 2px; overflow: hidden;
+  }
+  .well-fill { height: 100%; border-radius: 2px; }
+  .well-val { font-size: 11px; color: var(--text-2); width: 28px; text-align: right; }
+
+  /* ai picks */
+  .ai-row {
+    display: flex; gap: 8px; padding: 5px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .ai-row:last-of-type { border-bottom: none; }
+  .ai-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .ai-text { font-size: 11px; color: var(--text-1); line-height: 1.5; }
+  .ai-chip {
+    display: inline-block; font-size: 10px;
+    background: var(--purple-50); color: var(--purple-600);
+    padding: 1px 7px; border-radius: 10px; margin-top: 3px;
+  }
+
+  .gen-btn {
+    width: 100%; font-size: 12px; padding: 7px;
+    border-radius: var(--r-md);
+    border: 0.5px dashed var(--border-2);
+    background: transparent; color: var(--purple-400);
+    cursor: pointer; margin-top: 4px;
+    transition: background 0.12s;
+  }
+  .gen-btn:hover { background: var(--purple-50); }
+</style>
+</head>
+<body>
+
+    //EVERYTHING ABOVE HERE IS DESIGN RELATED
+
+<div class="header">
+  <div class="wordmark">UNI<b>PULSE</b></div>
+  <div class="hright">
+    <span class="date-pill">
+      <i class="ti ti-calendar" style="font-size:12px;vertical-align:-1px;margin-right:4px"></i>Wednesday, Jun 4
+    </span>
+    <button class="notif-btn" aria-label="Notifications">
+      <i class="ti ti-bell" style="font-size:14px"></i>
+    </button>
+  </div>
+</div>
+
+<div class="body-grid">
+
+  <!-- SIDEBAR -->
+  <nav class="sidenav">
+    <div class="nav-profile">
+      <div class="av">AK</div>
+      <div class="nav-name">Alex Kim</div>
+      <div class="nav-sub">Year 2 · CompSci</div>
+    </div>
+
+    <span class="nav-sec-label">OVERVIEW</span>
+    <div class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+    <div class="nav-item"><i class="ti ti-calendar"></i> Schedule</div>
+    <div class="nav-item"><i class="ti ti-checklist"></i> Tasks <span class="nav-badge red">3</span></div>
+
+    <span class="nav-sec-label">WELLBEING</span>
+    <div class="nav-item"><i class="ti ti-mood-smile"></i> Mood</div>
+    <div class="nav-item"><i class="ti ti-salad"></i> Diet</div>
+    <div class="nav-item"><i class="ti ti-zzz"></i> Sleep <span class="nav-badge green">6.5h</span></div>
+
+    <span class="nav-sec-label">AI</span>
+    <div class="nav-item"><i class="ti ti-sparkles"></i> Plan my week</div>
+    <div class="nav-item"><i class="ti ti-chart-line"></i> Insights</div>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- STAT STRIP (Hooked with IDs for JS engine) -->
+    <div class="stat-strip">
+      <div class="stat">
+        <div class="stat-lbl">Free time today</div>
+        <div class="stat-num" id="stat-free-time">3.5h</div>
+        <div class="stat-note green">2 study slots open</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl">Tasks due</div>
+        <div class="stat-num" id="stat-tasks-due">3</div>
+        <div class="stat-note red">1 urgent</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl">Next deadline</div>
+        <div class="stat-num" style="font-size:14px;padding-top:3px;">Chem Lab</div>
+        <div class="stat-note red">Thu · 2 days</div>
+      </div>
+      <div class="stat">
+        <div class="stat-lbl">Wellness score</div>
+        <div class="stat-num">72%</div>
+        <div class="stat-note">Sleep low today</div>
+      </div>
+    </div>
+
+    <!-- body -->
+    <div class="main-body">
+
+      <!-- TIMELINE AREA -->
+      <div class="timeline-area">
+        <div class="tl-header">
+          <span class="tl-title">Today's timeline</span>
+          <div class="tl-days">
+            <button class="tl-day">Mon</button>
+            <button class="tl-day">Tue</button>
+            <button class="tl-day active">Wed</button>
+            <button class="tl-day">Thu</button>
+            <button class="tl-day">Fri</button>
+          </div>
+        </div>
+
+        <!-- Cleared container for JavaScript dynamic timeline injection -->
+        <div class="timeline" id="timeline-container"></div>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- mood -->
+        <div>
+          <div class="rc-title">Mood check-in <span>today</span></div>
+          <div class="mood-chips">
+            <span class="mood-chip">Tired</span>
+            <span class="mood-chip sel">Okay</span>
+            <span class="mood-chip">Good</span>
+            <span class="mood-chip">Focused</span>
+            <span class="mood-chip">Stressed</span>
+          </div>
+          <div class="mood-insight" id="mood-insight-box">
+            <!-- Dynamic AI insights go here -->
+          </div>
+        </div>
+
+        <!-- tasks -->
+        <div>
+          <div class="rc-title">Tasks <span>this week</span></div>
+          <!-- Cleared container for JavaScript dynamic tasks list -->
+          <div id="tasks-container"></div>
+        </div>
+
+        <!-- wellness -->
+        <div>
+          <div class="rc-title">Wellness <span>today</span></div>
+          <div class="well-row">
+            <span class="well-label">Sleep</span>
+            <div class="well-bar"><div class="well-fill" style="width:72%;background:#EF9F27;"></div></div>
+            <span class="well-val">6.5h</span>
+          </div>
+          <div class="well-row">
+            <span class="well-label">Water</span>
+            <div class="well-bar"><div class="well-fill" style="width:60%;background:#1D9E75;"></div></div>
+            <span class="well-val">1.2L</span>
+          </div>
+          <div class="well-row">
+            <span class="well-label">Meals</span>
+            <div class="well-bar"><div class="well-fill" style="width:66%;background:#7F77DD;"></div></div>
+            <span class="well-val">2/3</span>
+          </div>
+        </div>
+
+        <!-- ai picks -->
+        <div>
+          <div class="rc-title">AI picks <span>for you</span></div>
+          <!-- Cleared container for JavaScript dynamic recommendations -->
+          <div id="ai-picks-container"></div>
+          <button class="gen-btn">
+            <i class="ti ti-sparkles" style="font-size:12px;vertical-align:-1px;margin-right:4px"></i>
+            Generate full week plan ↗
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- APPLICATION CORE ENGINE LOGIC -->
+<script>
+const appData = {
+  currentMood: "Okay",
+  wellnessScore: 72,
+  tasks: [
+    { id: 1, name: "COMP assignment 2", dueDays: 0, tag: "Done", status: "done" },
+    { id: 2, name: "Chem Lab report", dueDays: 2, tag: "2 days", status: "pending" },
+    { id: 3, name: "MATH problem set 5", dueDays: 4, tag: "4 days", status: "pending" },
+    { id: 4, name: "COMP midterm study", dueDays: 2, tag: "Fri", status: "pending" }
+  ],
+  schedule: {
+    "8am":  { type: "free",  name: "Free" },
+    "9am":  { type: "class", name: "COMP 201", sub: "Algorithms · Room B12" },
+    "10am": { type: "class", name: "COMP 201 cont." },
+    "11am": { type: "free",  name: "Free" },
+    "12pm": { type: "free",  name: "Lunch / free" },
+    "1pm":  { type: "free",  name: "Free" },
+    "2pm":  { type: "free",  name: "Free" },
+    "3pm":  { type: "free",  name: "Free" },
+    "4pm":  { type: "class", name: "MATH 301", sub: "Calculus · Room A7" },
+    "5pm":  { type: "class", name: "MATH 301 cont." },
+    "6pm":  { type: "free",  name: "Evening free" }
+  }
+};
+
+function updateAIRecommendations() {
+  const pendingTasks = appData.tasks.filter(t => t.status === "pending");
+  const aiPicksContainer = document.getElementById("ai-picks-container");
+  const moodInsightBox = document.getElementById("mood-insight-box");
+  
+  Object.keys(appData.schedule).forEach(hour => {
+    if (appData.schedule[hour].type !== "class") {
+      appData.schedule[hour] = { type: "free", name: "Free" };
+    }
+  });
+
+  let aiHtml = "";
+  let insightText = "";
+
+  if (appData.currentMood === "Stressed" || appData.currentMood === "Tired") {
+    insightText = `<i class="ti ti-sparkles" style="color:#534AB7"></i> You're feeling ${appData.currentMood.toLowerCase()}. Proposing a lighter, wellness-focused schedule today.`;
+    
+    appData.schedule["11am"] = { type: "break", name: "Break recommended", sub: "AI: Rest to counter fatigue" };
+    aiHtml += `
+      <div class="ai-row">
+        <div class="ai-dot" style="background:var(--teal-400);"></div>
+        <div class="ai-text">Take it easy at 11am. Your system needs physical recovery.<div class="ai-chip">wellness-rest</div></div>
+      </div>`;
+
+    if (pendingTasks.length > 0) {
+      appData.schedule["1pm"] = { type: "study", name: `Study: ${pendingTasks[0].name}`, sub: "AI allocated · Light session" };
+      aiHtml += `
+        <div class="ai-row">
+          <div class="ai-dot" style="background:var(--amber-400);"></div>
+          <div class="ai-text">Light study at 1pm: Focus strictly on ${pendingTasks[0].name} for 1 hour only.</div>
+        </div>`;
+    }
+  } 
+  else {
+    insightText = `<i class="ti ti-sparkles" style="color:#534AB7"></i> Energy levels are optimal. Excellent window to target core milestones.`;
+    
+    if (pendingTasks.length > 0) {
+      appData.schedule["1pm"] = { type: "study", name: `Study: ${pendingTasks[0].name}`, sub: "AI allocated · High priority" };
+      aiHtml += `
+        <div class="ai-row">
+          <div class="ai-dot" style="background:var(--red-400);"></div>
+          <div class="ai-text">Deep-focus block at 1pm on ${pendingTasks[0].name}.<div class="ai-chip">urgent</div></div>
+        </div>`;
+    }
+    if (pendingTasks.length > 1) {
+      appData.schedule["2pm"] = { type: "study", name: `Study: ${pendingTasks[1].name}`, sub: "AI allocated · Secondary objective" };
+      aiHtml += `
+        <div class="ai-row">
+          <div class="ai-dot" style="background:var(--purple-400);"></div>
+          <div class="ai-text">Follow up at 2pm with secondary task: ${pendingTasks[1].name}.<div class="ai-chip">high-efficiency</div></div>
+        </div>`;
+    }
+  }
+
+  if (appData.wellnessScore < 75) {
+    aiHtml += `
+      <div class="ai-row">
+        <div class="ai-dot" style="background:var(--teal-400);"></div>
+        <div class="ai-text">Target an early night sleep cycle. Wellness footprint is running low.</div>
+      </div>`;
+  }
+
+  if (moodInsightBox) moodInsightBox.innerHTML = insightText;
+  if (aiPicksContainer) aiPicksContainer.innerHTML = aiHtml;
+  
+  renderTimeline();
+  renderStats();
+}
+
+function renderTimeline() {
+  const container = document.getElementById("timeline-container");
+  if (!container) return;
+  let html = "";
+
+  Object.keys(appData.schedule).forEach(hour => {
+    const slot = appData.schedule[hour];
+    
+    if (hour === "12pm") {
+      html += `
+        <div class="tl-now">
+          <div class="tl-now-dot"></div>
+          <div class="tl-now-line"></div>
+          <span class="tl-now-label">Now · 12:10pm</span>
+        </div>`;
+    }
+
+    html += `
+      <div class="tl-hour">
+        <span class="tl-time">${hour}</span>
+        <div class="tl-line"></div>
+        <div class="tl-slot">
+          <div class="tl-block ${slot.type}">
+            <div class="tl-block-name">${slot.name}</div>
+            ${slot.sub ? `<div class="tl-block-sub">${slot.sub}</div>` : ""}
+          </div>
+        </div>
+      </div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function renderTasks() {
+  const container = document.getElementById("tasks-container");
+  if (!container) return;
+  container.innerHTML = appData.tasks.map(task => {
+    const isDone = task.status === "done";
+    const tagClass = task.tag === "Done" ? "green" : (task.tag.includes("2 days") || task.tag === "Fri" ? "red" : "amber");
+    
+    return `
+      <div class="task-row" data-id="${task.id}">
+        <div class="tchk ${isDone ? 'done' : ''}">${isDone ? '<i class="ti ti-check"></i>' : ''}</div>
+        <span class="tname ${isDone ? 'done' : ''}">${task.name}</span>
+        <span class="ttag ${tagClass}">${task.tag}</span>
+      </div>`;
+  }).join('');
+
+  container.querySelectorAll('.tchk').forEach(chk => {
+    chk.addEventListener('click', (e) => {
+      const row = e.target.closest('.task-row');
+      const taskId = parseInt(row.dataset.id);
+      const task = appData.tasks.find(t => t.id === taskId);
+      
+      if (task.status === "done") {
+        task.status = "pending";
+        task.tag = "Active"; 
+      } else {
+        task.status = "done";
+        task.tag = "Done";
+      }
+      
+      renderTasks();
+      updateAIRecommendations();
+    });
+  });
+}
+
+function renderStats() {
+  const pendingCount = appData.tasks.filter(t => t.status === "pending").length;
+  const freeTimeElement = document.getElementById("stat-free-time");
+  const tasksDueElement = document.getElementById("stat-tasks-due");
+  
+  if (tasksDueElement) tasksDueElement.innerText = pendingCount;
+  
+  let freeHours = 0;
+  Object.values(appData.schedule).forEach(slot => {
+    if (slot.type === "free") freeHours += 1;
+  });
+  if (freeTimeElement) freeTimeElement.innerText = `${freeHours}h`;
+}
+
+document.querySelectorAll('.mood-chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('sel'));
+    chip.classList.add('sel');
+    
+    appData.currentMood = chip.innerText.trim();
+    updateAIRecommendations();
+  });
+});
+
+document.querySelectorAll('.tl-day').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tl-day').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+// START THE APP UP
+renderTasks();
+updateAIRecommendations();
+</script>
+
+</body>
+</html>
