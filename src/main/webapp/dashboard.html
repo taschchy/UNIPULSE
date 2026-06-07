@@ -120,7 +120,7 @@
     margin-bottom: 8px;
   }
   .nav-name { font-size: 13px; font-weight: 500; color: var(--text-1); }
-  .nav-sub  { font-size: 11px; color: var(--text-3); }
+  .nav-sub { font-size: 11px; color: var(--text-3); }
 
   .nav-sec-label {
     display: block;
@@ -166,8 +166,8 @@
   .stat-lbl { font-size: 11px; color: var(--text-3); margin-bottom: 4px; }
   .stat-num { font-size: 20px; font-weight: 500; color: var(--text-1); }
   .stat-note { font-size: 11px; color: var(--text-2); margin-top: 2px; }
-  .stat-note.red { color: var(--red-600); }
   .stat-note.green { color: var(--teal-600); }
+  .stat-note.red { color: var(--red-600); }
 
   /* ── two-col body ── */
   .main-body { display: grid; grid-template-columns: 1fr 220px; }
@@ -280,15 +280,16 @@
     width: 14px; height: 14px; border-radius: 4px;
     border: 1px solid var(--border-2); flex-shrink: 0;
     display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
   }
   .tchk.done { background: var(--teal-400); border-color: var(--teal-400); }
   .tchk.done i { font-size: 9px; color: #fff; }
   .tname { font-size: 12px; flex: 1; color: var(--text-1); }
   .tname.done { text-decoration: line-through; color: var(--text-3); }
   .ttag { font-size: 10px; padding: 2px 7px; border-radius: 10px; }
-  .ttag.red    { background: var(--red-50);   color: var(--red-600);   }
-  .ttag.amber  { background: var(--amber-50); color: var(--amber-800); }
-  .ttag.green  { background: var(--green-50); color: var(--green-600); }
+  .ttag.red { background: var(--red-50); color: var(--red-600); }
+  .ttag.amber { background: var(--amber-50); color: var(--amber-800); }
+  .ttag.green { background: var(--green-50); color: var(--green-600); }
 
   /* wellness */
   .well-row { display: flex; align-items: center; gap: 8px; padding: 5px 0; }
@@ -327,8 +328,6 @@
 </head>
 <body>
 
-    //EVERYTHING ABOVE HERE IS DESIGN RELATED
-
 <div class="header">
   <div class="wordmark">UNI<b>PULSE</b></div>
   <div class="hright">
@@ -343,60 +342,50 @@
 
 <div class="body-grid">
 
-  <!-- SIDEBAR -->
   <nav class="sidenav">
-    <div class="nav-profile">
-      <div class="av">AK</div>
-      <div class="nav-name">Alex Kim</div>
-      <div class="nav-sub">Year 2 · CompSci</div>
-    </div>
+  <div class="nav-profile">
+    <div class="av">AK</div>
+    <div class="nav-name">Loading...</div>
+    <div class="nav-sub">---</div>
+  </div>
 
-    <span class="nav-sec-label">OVERVIEW</span>
-    <div class="nav-item active"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
-    <div class="nav-item"><i class="ti ti-calendar"></i> Schedule</div>
-    <div class="nav-item"><i class="ti ti-checklist"></i> Tasks <span class="nav-badge red">3</span></div>
+  <span class="nav-sec-label">OVERVIEW</span>
+  <div class="nav-item active" data-target="page-dashboard"><i class="ti ti-layout-dashboard"></i> Dashboard</div>
+  <div class="nav-item" data-target="page-dashboard"><i class="ti ti-calendar"></i> Schedule</div>
+  <div class="nav-item" data-target="page-tasks"><i class="ti ti-checklist"></i> Tasks <span class="nav-badge red">0</span></div>
 
-    <span class="nav-sec-label">WELLBEING</span>
-    <div class="nav-item"><i class="ti ti-mood-smile"></i> Mood</div>
-    <div class="nav-item"><i class="ti ti-salad"></i> Diet</div>
-    <div class="nav-item"><i class="ti ti-zzz"></i> Sleep <span class="nav-badge green">6.5h</span></div>
+  <span class="nav-sec-label">WELLBEING</span>
+  <div class="nav-item" data-target="page-mood"><i class="ti ti-mood-smile"></i> Mood</div>
+  <div class="nav-item" data-target="page-mood"><i class="ti ti-salad"></i> Diet</div>
+  <div class="nav-item" data-target="page-mood"><i class="ti ti-zzz"></i> Sleep <span class="nav-badge green">6.5h</span></div>
+</nav>
 
-    <span class="nav-sec-label">AI</span>
-    <div class="nav-item"><i class="ti ti-sparkles"></i> Plan my week</div>
-    <div class="nav-item"><i class="ti ti-chart-line"></i> Insights</div>
-  </nav>
-
-  <!-- MAIN -->
   <main class="main">
-
-    <!-- STAT STRIP (Hooked with IDs for JS engine) -->
-    <div class="stat-strip">
-      <div class="stat">
-        <div class="stat-lbl">Free time today</div>
-        <div class="stat-num" id="stat-free-time">3.5h</div>
-        <div class="stat-note green">2 study slots open</div>
-      </div>
-      <div class="stat">
-        <div class="stat-lbl">Tasks due</div>
-        <div class="stat-num" id="stat-tasks-due">3</div>
-        <div class="stat-note red">1 urgent</div>
-      </div>
-      <div class="stat">
-        <div class="stat-lbl">Next deadline</div>
-        <div class="stat-num" style="font-size:14px;padding-top:3px;">Chem Lab</div>
-        <div class="stat-note red">Thu · 2 days</div>
-      </div>
-      <div class="stat">
-        <div class="stat-lbl">Wellness score</div>
-        <div class="stat-num">72%</div>
-        <div class="stat-note">Sleep low today</div>
-      </div>
+  <div class="stat-strip">
+    <div class="stat">
+      <div class="stat-lbl">Free time today</div>
+      <div class="stat-num" id="stat-free-time">0h</div>
+      <div class="stat-note green">Calculating...</div>
     </div>
+    <div class="stat">
+      <div class="stat-lbl">Tasks due</div>
+      <div class="stat-num" id="stat-tasks-due">0</div>
+      <div class="stat-note red">Active</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Next deadline</div>
+      <div class="stat-num" style="font-size:14px;padding-top:3px;" id="stat-next-deadline">None</div>
+      <div class="stat-note red">-</div>
+    </div>
+    <div class="stat">
+      <div class="stat-lbl">Wellness score</div>
+      <div class="stat-num" id="stat-wellness-score">--%</div>
+      <div class="stat-note">Syncing...</div>
+    </div>
+  </div>
 
-    <!-- body -->
+  <div id="page-dashboard" class="page-view">
     <div class="main-body">
-
-      <!-- TIMELINE AREA -->
       <div class="timeline-area">
         <div class="tl-header">
           <span class="tl-title">Today's timeline</span>
@@ -408,37 +397,27 @@
             <button class="tl-day">Fri</button>
           </div>
         </div>
-
-        <!-- Cleared container for JavaScript dynamic timeline injection -->
         <div class="timeline" id="timeline-container"></div>
       </div>
 
-      <!-- RIGHT COLUMN -->
       <div class="right-col">
-
-        <!-- mood -->
         <div>
           <div class="rc-title">Mood check-in <span>today</span></div>
           <div class="mood-chips">
-            <span class="mood-chip">Tired</span>
-            <span class="mood-chip sel">Okay</span>
-            <span class="mood-chip">Good</span>
-            <span class="mood-chip">Focused</span>
-            <span class="mood-chip">Stressed</span>
+            <span class="mood-chip" id="mood-Tired">Tired</span>
+            <span class="mood-chip" id="mood-Okay">Okay</span>
+            <span class="mood-chip" id="mood-Good">Good</span>
+            <span class="mood-chip" id="mood-Focused">Focused</span>
+            <span class="mood-chip" id="mood-Stressed">Stressed</span>
           </div>
-          <div class="mood-insight" id="mood-insight-box">
-            <!-- Dynamic AI insights go here -->
-          </div>
+          <div class="mood-insight" id="mood-insight-box"></div>
         </div>
 
-        <!-- tasks -->
         <div>
           <div class="rc-title">Tasks <span>this week</span></div>
-          <!-- Cleared container for JavaScript dynamic tasks list -->
           <div id="tasks-container"></div>
         </div>
 
-        <!-- wellness -->
         <div>
           <div class="rc-title">Wellness <span>today</span></div>
           <div class="well-row">
@@ -457,136 +436,80 @@
             <span class="well-val">2/3</span>
           </div>
         </div>
-
-        <!-- ai picks -->
-        <div>
-          <div class="rc-title">AI picks <span>for you</span></div>
-          <!-- Cleared container for JavaScript dynamic recommendations -->
-          <div id="ai-picks-container"></div>
-          <button class="gen-btn">
-            <i class="ti ti-sparkles" style="font-size:12px;vertical-align:-1px;margin-right:4px"></i>
-            Generate full week plan ↗
-          </button>
-        </div>
-
       </div>
     </div>
-  </main>
+  </div>
+
+  <div id="page-tasks" class="page-view" style="display: none; padding: 20px;">
+    <h2 style="font-size: 18px; margin-bottom: 10px;">All Tasks Management</h2>
+    <p style="font-size: 13px; color: var(--text-2); margin-bottom: 20px;">Add, edit, and complete your active university tasks directly from the database.</p>
+    <div style="border: 1px dashed var(--border); padding: 30px; text-align: center; border-radius: var(--r-md); color: var(--text-3); font-size: 13px;">
+       Task Management Module Integration Screen
+    </div>
+  </div>
+
+  <div id="page-mood" class="page-view" style="display: none; padding: 20px;">
+    <h2 style="font-size: 18px; margin-bottom: 10px;">Wellbeing Analytics</h2>
+    <p style="font-size: 13px; color: var(--text-2); margin-bottom: 20px;">Monitor your mental performance, diet tracking, and hydration consistency analytics.</p>
+    <div style="border: 1px dashed var(--border); padding: 30px; text-align: center; border-radius: var(--r-md); color: var(--text-3); font-size: 13px;">
+       Wellbeing Trends & Charts Screen
+    </div>
+  </div>
+</main>
 </div>
 
-<!-- APPLICATION CORE ENGINE LOGIC -->
 <script>
-const appData = {
+let appData = {
+  userInfo: { full_name: "Loading...", major: "---", year: "-" },
   currentMood: "Okay",
-  wellnessScore: 72,
-  tasks: [
-    { id: 1, name: "COMP assignment 2", dueDays: 0, tag: "Done", status: "done" },
-    { id: 2, name: "Chem Lab report", dueDays: 2, tag: "2 days", status: "pending" },
-    { id: 3, name: "MATH problem set 5", dueDays: 4, tag: "4 days", status: "pending" },
-    { id: 4, name: "COMP midterm study", dueDays: 2, tag: "Fri", status: "pending" }
-  ],
-  schedule: {
-    "8am":  { type: "free",  name: "Free" },
-    "9am":  { type: "class", name: "COMP 201", sub: "Algorithms · Room B12" },
-    "10am": { type: "class", name: "COMP 201 cont." },
-    "11am": { type: "free",  name: "Free" },
-    "12pm": { type: "free",  name: "Lunch / free" },
-    "1pm":  { type: "free",  name: "Free" },
-    "2pm":  { type: "free",  name: "Free" },
-    "3pm":  { type: "free",  name: "Free" },
-    "4pm":  { type: "class", name: "MATH 301", sub: "Calculus · Room A7" },
-    "5pm":  { type: "class", name: "MATH 301 cont." },
-    "6pm":  { type: "free",  name: "Evening free" }
-  }
+  wellnessScore: 0,
+  waterAmount: 0.0,
+  mealsEaten: 0,
+  totalMeals: 3,
+  tasks: [],
+  schedule: {}
 };
 
-function updateAIRecommendations() {
-  const pendingTasks = appData.tasks.filter(t => t.status === "pending");
-  const aiPicksContainer = document.getElementById("ai-picks-container");
-  const moodInsightBox = document.getElementById("mood-insight-box");
-  
-  Object.keys(appData.schedule).forEach(hour => {
-    if (appData.schedule[hour].type !== "class") {
-      appData.schedule[hour] = { type: "free", name: "Free" };
-    }
-  });
+function loadDashboardFromDatabase() {
+  fetch('loginRelated/get_dashboard.php')
+    .then(res => res.json())
+    .then(data => {
+      appData.userInfo = data.userInfo || { full_name: "User Account", major: "General Studies", year: "1" };
+      appData.currentMood = data.currentMood || "Okay";
+      appData.wellnessScore = data.wellnessScore !== undefined ? parseInt(data.wellnessScore) : 50;
+      appData.waterAmount = data.waterAmount !== undefined ? parseFloat(data.waterAmount) : 0.0;
+      appData.mealsEaten = data.mealsEaten !== undefined ? parseInt(data.mealsEaten) : 0;
+      appData.totalMeals = data.totalMeals || 3;
+      appData.tasks = data.tasks || [];
+      appData.schedule = data.schedule || {};
 
-  let aiHtml = "";
-  let insightText = "";
+      // Populate Elements
+      document.querySelector('.nav-name').innerText = appData.userInfo.full_name;
+      document.querySelector('.nav-sub').innerText = `Year ${appData.userInfo.year} · ${appData.userInfo.major}`;
+      
+      document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('sel'));
+      const activeMoodChip = document.getElementById(`mood-${appData.currentMood}`);
+      if (activeMoodChip) activeMoodChip.classList.add('sel');
 
-  if (appData.currentMood === "Stressed" || appData.currentMood === "Tired") {
-    insightText = `<i class="ti ti-sparkles" style="color:#534AB7"></i> You're feeling ${appData.currentMood.toLowerCase()}. Proposing a lighter, wellness-focused schedule today.`;
-    
-    appData.schedule["11am"] = { type: "break", name: "Break recommended", sub: "AI: Rest to counter fatigue" };
-    aiHtml += `
-      <div class="ai-row">
-        <div class="ai-dot" style="background:var(--teal-400);"></div>
-        <div class="ai-text">Take it easy at 11am. Your system needs physical recovery.<div class="ai-chip">wellness-rest</div></div>
-      </div>`;
+      renderAll();
+    })
+    .catch(err => console.error("Frontend syncer caught error:", err));
+}
 
-    if (pendingTasks.length > 0) {
-      appData.schedule["1pm"] = { type: "study", name: `Study: ${pendingTasks[0].name}`, sub: "AI allocated · Light session" };
-      aiHtml += `
-        <div class="ai-row">
-          <div class="ai-dot" style="background:var(--amber-400);"></div>
-          <div class="ai-text">Light study at 1pm: Focus strictly on ${pendingTasks[0].name} for 1 hour only.</div>
-        </div>`;
-    }
-  } 
-  else {
-    insightText = `<i class="ti ti-sparkles" style="color:#534AB7"></i> Energy levels are optimal. Excellent window to target core milestones.`;
-    
-    if (pendingTasks.length > 0) {
-      appData.schedule["1pm"] = { type: "study", name: `Study: ${pendingTasks[0].name}`, sub: "AI allocated · High priority" };
-      aiHtml += `
-        <div class="ai-row">
-          <div class="ai-dot" style="background:var(--red-400);"></div>
-          <div class="ai-text">Deep-focus block at 1pm on ${pendingTasks[0].name}.<div class="ai-chip">urgent</div></div>
-        </div>`;
-    }
-    if (pendingTasks.length > 1) {
-      appData.schedule["2pm"] = { type: "study", name: `Study: ${pendingTasks[1].name}`, sub: "AI allocated · Secondary objective" };
-      aiHtml += `
-        <div class="ai-row">
-          <div class="ai-dot" style="background:var(--purple-400);"></div>
-          <div class="ai-text">Follow up at 2pm with secondary task: ${pendingTasks[1].name}.<div class="ai-chip">high-efficiency</div></div>
-        </div>`;
-    }
-  }
-
-  if (appData.wellnessScore < 75) {
-    aiHtml += `
-      <div class="ai-row">
-        <div class="ai-dot" style="background:var(--teal-400);"></div>
-        <div class="ai-text">Target an early night sleep cycle. Wellness footprint is running low.</div>
-      </div>`;
-  }
-
-  if (moodInsightBox) moodInsightBox.innerHTML = insightText;
-  if (aiPicksContainer) aiPicksContainer.innerHTML = aiHtml;
-  
+function renderAll() {
   renderTimeline();
+  renderTasks();
   renderStats();
+  renderWellnessMetrics();
 }
 
 function renderTimeline() {
   const container = document.getElementById("timeline-container");
   if (!container) return;
-  let html = "";
-
-  Object.keys(appData.schedule).forEach(hour => {
+  
+  container.innerHTML = Object.keys(appData.schedule).map(hour => {
     const slot = appData.schedule[hour];
-    
-    if (hour === "12pm") {
-      html += `
-        <div class="tl-now">
-          <div class="tl-now-dot"></div>
-          <div class="tl-now-line"></div>
-          <span class="tl-now-label">Now · 12:10pm</span>
-        </div>`;
-    }
-
-    html += `
+    return `
       <div class="tl-hour">
         <span class="tl-time">${hour}</span>
         <div class="tl-line"></div>
@@ -597,87 +520,86 @@ function renderTimeline() {
           </div>
         </div>
       </div>`;
-  });
-
-  container.innerHTML = html;
+  }).join('');
 }
 
 function renderTasks() {
   const container = document.getElementById("tasks-container");
   if (!container) return;
+  
   container.innerHTML = appData.tasks.map(task => {
     const isDone = task.status === "done";
-    const tagClass = task.tag === "Done" ? "green" : (task.tag.includes("2 days") || task.tag === "Fri" ? "red" : "amber");
-    
     return `
-      <div class="task-row" data-id="${task.id}">
-        <div class="tchk ${isDone ? 'done' : ''}">${isDone ? '<i class="ti ti-check"></i>' : ''}</div>
+      <div class="task-row" data-id="${task.id}" style="cursor:pointer;">
+        <div class="tchk ${isDone ? 'done' : ''}">${isDone ? '✓' : ''}</div>
         <span class="tname ${isDone ? 'done' : ''}">${task.name}</span>
-        <span class="ttag ${tagClass}">${task.tag}</span>
+        <span class="ttag ${isDone ? 'green' : 'amber'}">${task.tag}</span>
       </div>`;
   }).join('');
-
-  container.querySelectorAll('.tchk').forEach(chk => {
-    chk.addEventListener('click', (e) => {
-      const row = e.target.closest('.task-row');
-      const taskId = parseInt(row.dataset.id);
-      const task = appData.tasks.find(t => t.id === taskId);
-      
-      if (task.status === "done") {
-        task.status = "pending";
-        task.tag = "Active"; 
-      } else {
-        task.status = "done";
-        task.tag = "Done";
-      }
-      
-      renderTasks();
-      updateAIRecommendations();
-    });
-  });
 }
 
 function renderStats() {
   const pendingCount = appData.tasks.filter(t => t.status === "pending").length;
-  const freeTimeElement = document.getElementById("stat-free-time");
-  const tasksDueElement = document.getElementById("stat-tasks-due");
-  
-  if (tasksDueElement) tasksDueElement.innerText = pendingCount;
-  
-  let freeHours = 0;
-  Object.values(appData.schedule).forEach(slot => {
-    if (slot.type === "free") freeHours += 1;
-  });
-  if (freeTimeElement) freeTimeElement.innerText = `${freeHours}h`;
+  if (document.getElementById("stat-tasks-due")) document.getElementById("stat-tasks-due").innerText = pendingCount;
+  if (document.getElementById("stat-wellness-score")) document.getElementById("stat-wellness-score").innerText = `${appData.wellnessScore}%`;
 }
 
+function renderWellnessMetrics() {
+  // Update Water DOM Elements
+  const waterVal = document.querySelector('.well-row:nth-of-type(2) .well-val');
+  const waterBar = document.querySelector('.well-row:nth-of-type(2) .well-fill');
+  if (waterVal && waterBar) {
+    waterVal.innerText = `${appData.waterAmount.toFixed(2)}L`;
+    waterBar.style.width = `${Math.min((appData.waterAmount / 3.0) * 100, 100)}%`;
+  }
+
+  // Update Meal DOM Elements
+  const mealVal = document.querySelector('.well-row:nth-of-type(3) .well-val');
+  const mealBar = document.querySelector('.well-row:nth-of-type(3) .well-fill');
+  if (mealVal && mealBar) {
+    mealVal.innerText = `${appData.mealsEaten}/${appData.totalMeals}`;
+    mealBar.style.width = `${(appData.mealsEaten / appData.totalMeals) * 100}%`;
+  }
+}
+
+// Global Custom click actions to execute updates directly to your database logs
+function updateMetric(type, value) {
+  fetch('loginRelated/save_wellness.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ type: type, value: value })
+  })
+  .then(() => loadDashboardFromDatabase());
+}
+
+// Bind Button UI Event Handlers
 document.querySelectorAll('.mood-chip').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('sel'));
-    chip.classList.add('sel');
-    
-    appData.currentMood = chip.innerText.trim();
-    updateAIRecommendations();
-  });
+  chip.onclick = () => updateMetric('mood', chip.innerText.trim());
 });
 
-document.querySelectorAll('.tl-day').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tl-day').forEach(b => b.classList.remove('active'));
+// To hook your UI plus/minus buttons up seamlessly, inject these selectors inside your HTML markup layout structure
+// For Water Buttons: add onclick="updateMetric('water', 0.25)" or onclick="updateMetric('water', -0.25)"
+// For Meal Buttons: add onclick="updateMetric('meals', 1)" or onclick="updateMetric('meals', -1)"
+
+// ==========================================
+// SIDEBAR NAVIGATION SCREEN MANAGER
+// ==========================================
+document.querySelectorAll('.nav-item').forEach(btn => {
+  btn.onclick = () => {
+    const targetId = btn.getAttribute('data-target');
+    if (!targetId) return; // Skip buttons without targets
+
+    // 1. Swap active visual highlight classes on the buttons
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
     btn.classList.add('active');
-  });
+
+    // 2. Hide all pages, then show the matching targeted container
+    document.querySelectorAll('.page-view').forEach(page => page.style.display = 'none');
+    document.getElementById(targetId).style.display = 'block';
+  };
 });
 
-document.querySelectorAll('.nav-item').forEach(item => {
-  item.addEventListener('click', () => {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
-  });
-});
-
-// START THE APP UP
-renderTasks();
-updateAIRecommendations();
+loadDashboardFromDatabase();
 </script>
 
 </body>
