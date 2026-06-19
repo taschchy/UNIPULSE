@@ -580,6 +580,17 @@
       chip.classList.add('sel');
       // update teks nasihat
       document.getElementById('srs-cbt-text').innerText = "You selected: " + chip.innerText;
+      // hantar ke backend API
+    fetch('/saveMood.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ mood: mood })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Mood saved:", data);
+    })
+    .catch(err => console.error("Error:", err));
     });
   });
 </script>

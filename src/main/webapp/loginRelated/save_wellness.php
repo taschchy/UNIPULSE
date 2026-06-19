@@ -26,7 +26,9 @@ $type = $input['type'];
 // 1. Process Mood Changes
 if ($type === 'mood') {
     $val = $input['value'];
-    $stmt = $conn->prepare("INSERT INTO user_moods (user_id, mood, log_date) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE mood = ?");
+    $stmt = $conn->prepare("INSERT INTO user_moods (user_id, mood, log_date) 
+                            VALUES (?, ?, ?) 
+                            ON DUPLICATE KEY UPDATE mood = ?");
     $stmt->bind_param("isss", $user_id, $val, $today, $val);
     $stmt->execute();
 }
