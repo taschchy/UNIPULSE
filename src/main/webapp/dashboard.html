@@ -482,6 +482,7 @@
           <div class="widget-section">
             <div class="rc-title">Bio-Metrics <span>Sync Status</span></div>
             
+            <!-- Sleep Profile -->
             <div class="well-row">
               <span class="well-label">Sleep</span>
               <div style="width:24px;"></div>
@@ -490,14 +491,16 @@
               <span class="well-val">6.5h</span>
             </div>
 
+            <!-- Steps Activity Tracker -->
             <div class="well-row">
-              <span class="well-label">Steps</span>
+              <span class="well-label">Sleep</span>
               <div style="width:24px;"></div>
               <div class="well-bar"><div id="fit-step-bar" class="well-fill" style="width:0%; background:var(--blue-main);"></div></div>
               <div style="width:24px;"></div>
               <span id="fit-step-val" class="well-val">0</span>
             </div>
 
+            <!-- Hydration Input Manager -->
             <div class="well-row">
               <span class="well-label">Water</span>
               <button class="well-btn" onclick="updateMetric('water', -0.25)">-</button>
@@ -506,6 +509,7 @@
               <span id="water-val" class="well-val">0.00L</span>
             </div>
 
+            <!-- Dietary Meals Tracker -->
             <div class="well-row">
               <span class="well-label">Meals</span>
               <button class="well-btn" onclick="updateMetric('meals', -1)">-</button>
@@ -514,6 +518,7 @@
               <span id="meals-val" class="well-val">0/3</span>
             </div>
 
+            <!-- Nutritional Calorie Counter -->
             <div class="well-row">
               <span class="well-label">Calories</span>
               <div style="width:24px;"></div>
@@ -526,10 +531,12 @@
       </div>
     </div>
 
+    <!-- Supplementary Screens (Dynamic Navigation Compatible) -->
     <div id="page-schedule" class="page-view" style="display: none; padding: 24px;">
       <h2 style="font-size: 18px; font-weight:600; margin-bottom: 8px;">Academic Calendar Integration</h2>
       <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Synchronized live via integrated institute syllabus schedules.</p>
       
+      <!-- Integrated Schedule Entry System -->
       <div style="margin-bottom: 20px; background: var(--bg-accent); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
         <h3 id="schedule-form-title" style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">Add New Schedule Block</h3>
         <form id="add-schedule-form" onsubmit="event.preventDefault(); addNewScheduleSlot();" style="display: flex; gap: 10px; flex-wrap: wrap;">
@@ -554,12 +561,14 @@
       <h2 style="font-size: 18px; font-weight:600; margin-bottom: 8px;">Comprehensive Assignment Grid</h2>
       <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;">Prioritize upcoming exam benchmarks, test profiles, and papers.</p>
       
+      <!-- Integrated Task entry System -->
       <div style="margin-bottom: 20px; background: var(--bg-accent); padding: 16px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
-        <h3 style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">Create Course Assignment / Task</h3>
+        <h3 id="task-form-title" style="font-size: 14px; margin-bottom: 12px; font-weight: 600;">Create Course Assignment / Task</h3>
         <form id="add-task-form" onsubmit="event.preventDefault(); addNewCourseTask();" style="display: flex; gap: 10px; flex-wrap: wrap;">
           <input type="text" id="task-name-input" placeholder="Task Designation Name" required style="padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 13px; flex: 1; min-width: 200px;">
           <input type="text" id="task-tag-input" placeholder="Priority Tag (e.g., Urgent · 3 days)" required style="padding: 6px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 13px;">
-          <button type="submit" style="background: var(--purple-main); color: var(--text-primary); border: none; padding: 6px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer;">Append Task</button>
+          <button type="submit" id="task-submit-btn" style="background: var(--purple-main); color: var(--text-primary); border: none; padding: 6px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 700; cursor: pointer;">Append Task</button>
+          <button type="button" id="task-cancel-btn" onclick="clearTaskForm()" style="display: none; background: var(--bg-card); color: var(--text-secondary); border: 1px solid var(--border-color); padding: 6px 12px; border-radius: var(--radius-sm); font-size: 13px; cursor: pointer;">Cancel</button>
         </form>
       </div>
       <div id="tasks-list-view" style="display: flex; flex-direction: column; gap: 10px;"></div>
@@ -609,8 +618,9 @@ let appData = {
   nutritionCalories: 1680
 };
 
-// Tracks if we are currently editing an existing time key
+// Tracking keys for modification pipelines
 let originalEditingTimeKey = null;
+let currentEditingTaskId = null;
 
 // ==========================================
 // 2. REMOTE DATABASE SYNCHRONIZER
@@ -833,7 +843,7 @@ function updateMetric(type, value) {
       renderStats();
     }
   })
-  .catch(err => console.log("State preserved locally. Sync pending connection to remote data endpoints."));
+  .catch(err => console.log("State preserved locally."));
 }
 
 function toggleTaskStatus(taskId, isChecked) {
@@ -852,7 +862,7 @@ function toggleTaskStatus(taskId, isChecked) {
   .catch(err => console.log("Task change cached locally."));
 }
 
-// Dynamic Multi-View Client Side App Navigation Router
+// Dynamic Navigation
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.onclick = () => {
     const targetId = btn.getAttribute('data-target');
@@ -866,35 +876,22 @@ document.querySelectorAll('.nav-item').forEach(btn => {
   };
 });
 
-// App Initialization Execution Chain
 document.querySelectorAll('.mood-chip').forEach(chip => {
   chip.onclick = () => updateMetric('mood', chip.innerText.trim());
 });
 
-// Mood Tracker Click Logic (Visual Check-In Screen)
 document.querySelectorAll('.mood-chip-visual').forEach(chip => {
   chip.addEventListener('click', () => {
     document.querySelectorAll('.mood-chip-visual').forEach(c => c.classList.remove('sel'));
     chip.classList.add('sel');
     document.getElementById('srs-cbt-text').innerText = "You selected: " + chip.innerText.trim();
-    
-    fetch('/saveMood.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mood: chip.innerText.trim() })
-    })
-    .then(res => res.json())
-    .then(data => console.log("Mood saved:", data))
-    .catch(err => console.error("Error:", err));
   });
 });
 
-// Timeline Day Button Click Listener
 document.querySelectorAll('.tl-day').forEach(dayBtn => {
   dayBtn.addEventListener('click', () => {
     document.querySelectorAll('.tl-day').forEach(b => b.classList.remove('active'));
     dayBtn.classList.add('active');
-    console.log("Switched active dashboard timeline context to: " + dayBtn.innerText.trim());
   });
 });
 
@@ -910,6 +907,7 @@ renderAll = function() {
 };
 
 function renderExtendedViews() {
+  // Schedule Management List Renderer
   const schedList = document.getElementById("schedule-list-view");
   if (schedList) {
     schedList.innerHTML = Object.keys(appData.schedule).sort().map(hour => {
@@ -935,6 +933,7 @@ function renderExtendedViews() {
     }).join('');
   }
   
+  // Tasks Management List Renderer (UPDATED: Added Action Buttons here too!)
   const tasksList = document.getElementById("tasks-list-view");
   if (tasksList) {
     if (appData.tasks.length === 0) {
@@ -949,46 +948,44 @@ function renderExtendedViews() {
 
       return `
         <div style="padding: 12px 16px; border: 1px solid var(--border-color); border-radius: var(--radius-md); background: var(--bg-card); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow);">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTaskStatus(${task.id}, this.checked)" style="accent-color:var(--purple-main); cursor:pointer; width:15px; height:15px;">
-            <span style="font-size: 13px; font-weight: 500; text-decoration: ${isDone ? 'line-through' : 'none'}; color: ${isDone ? 'var(--text-muted)' : 'var(--text-primary)'};">${task.name}</span>
+          <div style="display: flex; align-items: center; gap: 12px; flex: 1; min-width: 0;">
+            <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleTaskStatus(${task.id}, this.checked)" style="accent-color:var(--purple-main); cursor:pointer; width:15px; height:15px; flex-shrink:0;">
+            <span style="font-size: 13px; font-weight: 500; text-decoration: ${isDone ? 'line-through' : 'none'}; color: ${isDone ? 'var(--text-muted)' : 'var(--text-primary)'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${task.name}</span>
           </div>
-          <span class="ttag ${tagClass}">${task.tag}</span>
+          <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-left: 8px;">
+            <span class="ttag ${tagClass}">${task.tag}</span>
+            <div class="action-btn-group">
+              <button class="action-icon-btn" title="Edit Task" onclick="editCourseTask(${task.id})">
+                <i class="ti ti-edit"></i>
+              </button>
+              <button class="action-icon-btn delete" title="Delete Task" onclick="deleteCourseTask(${task.id})">
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+          </div>
         </div>`;
     }).join('');
   }
 }
 
-// ── NEW CONTROLLER ACTIONS: EDIT & DELETE SCHEDULE SLOTS ──
+// ── SCHEDULE MODULE ACTIONS ──
 function editScheduleSlot(hourKey) {
   const slot = appData.schedule[hourKey];
   if (!slot) return;
-
-  // Load slot data back into form inputs
   document.getElementById("sched-time").value = hourKey;
   document.getElementById("sched-name").value = slot.name;
   document.getElementById("sched-sub").value = slot.sub || "";
   document.getElementById("sched-type").value = slot.type || "class";
-
-  // Modify form title and actions button text to show update context
   document.getElementById("schedule-form-title").innerText = "Modify Selected Schedule Block";
   document.getElementById("sched-submit-btn").innerText = "Update Slot Info";
   document.getElementById("sched-cancel-btn").style.display = "inline-block";
-
-  originalEditingTimeKey = hourKey; // Cache key to handle changes in time index strings
+  originalEditingTimeKey = hourKey;
 }
 
 function deleteScheduleSlot(hourKey) {
   if (confirm(`Are you sure you want to remove the slot at ${hourKey}?`)) {
     delete appData.schedule[hourKey];
     renderAll();
-    
-    // Remote database sync hook placeholder
-    fetch('loginRelated/save_wellness.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'delete_schedule', hour: hourKey })
-    }).catch(err => console.log("Deletion cached locally."));
   }
 }
 
@@ -1007,33 +1004,72 @@ function addNewScheduleSlot() {
   const type = document.getElementById("sched-type").value;
   
   if (hour && name) {
-    // If the time was changed during an edit action, clean out the old timestamp key
     if (originalEditingTimeKey && originalEditingTimeKey !== hour) {
       delete appData.schedule[originalEditingTimeKey];
     }
-
     appData.schedule[hour] = { name, type, sub };
     renderAll();
     clearScheduleForm();
-
-    // Database push notification sync hook
-    fetch('loginRelated/save_wellness.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type: 'save_schedule', hour, name, type, sub })
-    }).catch(err => console.log("Schedule updates saved locally."));
   }
+}
+
+// ── NEW TASK MODULE ACTIONS: EDIT & DELETE ──
+function editCourseTask(taskId) {
+  const task = appData.tasks.find(t => t.id === taskId);
+  if (!task) return;
+
+  // Load current properties into inputs
+  document.getElementById("task-name-input").value = task.name;
+  document.getElementById("task-tag-input").value = task.tag;
+
+  // Change headers to reflect update context
+  document.getElementById("task-form-title").innerText = "Modify Course Assignment";
+  document.getElementById("task-submit-btn").innerText = "Save Task Changes";
+  document.getElementById("task-cancel-btn").style.display = "inline-block";
+
+  currentEditingTaskId = taskId;
+}
+
+function deleteCourseTask(taskId) {
+  if (confirm("Are you sure you want to permanently remove this course assignment?")) {
+    appData.tasks = appData.tasks.filter(t => t.id !== taskId);
+    renderAll();
+    
+    // Safety check if user deletes a task while editing it
+    if (currentEditingTaskId === taskId) {
+      clearTaskForm();
+    }
+  }
+}
+
+function clearTaskForm() {
+  document.getElementById("add-task-form").reset();
+  document.getElementById("task-form-title").innerText = "Create Course Assignment / Task";
+  document.getElementById("task-submit-btn").innerText = "Append Task";
+  document.getElementById("task-cancel-btn").style.display = "none";
+  currentEditingTaskId = null;
 }
 
 function addNewCourseTask() {
   const name = document.getElementById("task-name-input").value.trim();
   const tag = document.getElementById("task-tag-input").value.trim();
   
-  if(name && tag) {
-    const id = Date.now();
-    appData.tasks.push({ id, name, tag, status: "pending" });
+  if (name && tag) {
+    if (currentEditingTaskId !== null) {
+      // Find and update existing structural entry object
+      let task = appData.tasks.find(t => t.id === currentEditingTaskId);
+      if (task) {
+        task.name = name;
+        task.tag = tag;
+      }
+    } else {
+      // If not editing, create a brand new task
+      const id = Date.now();
+      appData.tasks.push({ id, name, tag, status: "pending" });
+    }
+    
     renderAll();
-    document.getElementById("add-task-form").reset();
+    clearTaskForm();
   }
 }
 </script>
