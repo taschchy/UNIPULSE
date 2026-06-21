@@ -93,11 +93,11 @@
   .date-pill {
     font-size: 13px;
     font-weight: 500;
-    color: var(--text-secondary);
+    color: #f82f94;
     border: 1px solid var(--border-color);
     border-radius: 30px;
     padding: 6px 16px;
-    background: var(--bg-card);
+    background: #c5e987;
     display: flex; align-items: center; gap: 6px;
     shadow: var(--shadow);
   }
@@ -105,10 +105,10 @@
     width: 36px; height: 36px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border-color);
-    background: var(--bg-card);
+    background: #c5e987;
     display: flex; align-items: center; justify-content: center;
     cursor: pointer;
-    color: var(--text-secondary);
+    color: #f82f94;
     transition: all 0.2s;
   }
   .notif-btn:hover { background: var(--bg-accent); border-color: var(--text-muted); }
@@ -378,7 +378,8 @@
   <div class="wordmark">UNI<b>PULSE</b></div>
   <div class="hright">
     <span class="date-pill">
-      <i class="ti ti-calendar"></i>Wednesday, Jun 4
+    <i class="ti ti-calendar"></i>
+    <span id="currentDate"></span>
     </span>
     <button class="notif-btn" aria-label="Notifications" onclick="alert('All university module updates and alert networks are functional.')">
       <i class="ti ti-bell"></i>
@@ -1072,6 +1073,20 @@ function addNewCourseTask() {
     clearTaskForm();
   }
 }
+    function updateDate() {
+        const dateElement = document.getElementById("currentDate");
+
+        const options = {
+            weekday: 'long',
+            month: 'short',
+            day: 'numeric',
+            timeZone: 'Asia/Kuala_Lumpur'
+        };
+
+        dateElement.textContent =
+            new Date().toLocaleDateString('en-US', options);
+    }
+    updateDate();
 </script>
 </body>
 </html>
