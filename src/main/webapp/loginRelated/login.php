@@ -627,6 +627,7 @@ document.querySelectorAll('.nav-item').forEach(btn => {
 // Run Initializations
 attachMoodListeners();
 loadDashboardFromDatabase();
+loadMoodHistory();
 </script>
 
 </body>

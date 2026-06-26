@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>UNIPULSE — Student Wellness Hub</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -67,12 +70,19 @@
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Poppins', sans-serif;
     background-color: var(--bg-app);
     color: var(--text-primary);
     min-height: 100vh;
     padding: 2rem;
     line-height: 1.5;
+  }
+  .wordmark,
+  h2,
+  .rc-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
   }
 
   /* ── Header Area ── */
@@ -83,7 +93,8 @@
     margin-bottom: 2rem;
   }
   .wordmark {
-    font-size: 16px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 24px;
     font-weight: 700;
     letter-spacing: 1px;
     color: var(--text-muted);
@@ -207,9 +218,15 @@
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 20px;
   }
-  .tl-title { font-size: 15px; font-weight: 600; color: var(--text-primary); }
+  .tl-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
   .tl-days { display: flex; gap: 6px; }
   .tl-day {
+    font-family: 'Poppins', sans-serif;
     font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 30px;
     border: 1px solid var(--border-color); color: var(--text-secondary);
     cursor: pointer; background: var(--bg-card); transition: all 0.2s;
@@ -309,11 +326,7 @@
     transform: scale(1.05);
     cursor: pointer;
   } 
-  .mood-chip-visual.sel {
-    background: var(--purple-light);
-    border-color: var(--purple-main);
-    color: var(--purple-main);
-  }
+
 
   /* Task Elements */
   .task-row {
@@ -402,7 +415,7 @@
     <div class="nav-item" data-target="page-tasks"><i class="ti ti-checkbox"></i> Course Tasks <span class="nav-badge red">0</span></div>
 
     <span class="nav-sec-label">ANALYTICS & WELLBEING</span>
-    <div class="nav-item" data-target="page-mood"><i class="ti ti-mood-smile"></i> Mood Tracker</div>
+    <div class="nav-item" data-target="page-mood"><i class="ti ti-mood-smile"></i> Mood & Wellness</div>
     <div class="nav-item" data-target="page-mood"><i class="ti ti-chart-bar"></i> Personal Trends</div>
   </nav>
 
@@ -457,17 +470,28 @@
         </div>
 
         <div class="right-col">
+            <!-- Song of the Day -->
+            <div class="widget-section">
+            <div class="rc-title">
+            🎵 Song of the Day
+          </div>
+          <iframe
+            id="songFrame"
+            src="https://open.spotify.com/embed/playlist/0OAnyLL0M3pM8dg056MTss?utm_source=generator&si=0a7b40bb8d0344d3"
+            width="100%"
+            height="352"
+            frameborder="0"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+             loading="lazy">
+            </iframe>
+          </div>
+
+          <!-- Quote of the Day -->
           <div class="widget-section">
-            <div class="rc-title">Cognitive Mood Evaluation <span>Today</span></div>
-            <div class="mood-chips">
-              <span class="mood-chip">Great</span>
-              <span class="mood-chip">Good</span>
-              <span class="mood-chip">Okay</span>
-              <span class="mood-chip">Tired</span>
+            <div class="rc-title">
+            🌟 Quote of the Day
             </div>
-            <div id="srs-cbt-advice" class="srs-cbt-container">
-              <i class="ti ti-brain"></i> <span id="srs-cbt-text">Log your mood baseline regularly to personalize metrics.</span>
-            </div>
+            <p id="dailyQuote" class="quote-text"></p>
           </div>
 
           <div class="widget-section">
@@ -482,7 +506,7 @@
 
           <div class="widget-section">
             <div class="rc-title">Bio-Metrics <span>Sync Status</span></div>
-            
+         
             <!-- Sleep Profile -->
             <div class="well-row">
               <span class="well-label">Sleep</span>
@@ -529,8 +553,7 @@
             </div>
           </div>
         </div>
-      </div>
-    </div>
+       
 
     <!-- Supplementary Screens (Dynamic Navigation Compatible) -->
     <div id="page-schedule" class="page-view" style="display: none; padding: 24px;">
@@ -587,9 +610,23 @@
           <span class="mood-chip-visual"><img src="images/angry.jpg" width="160"><br>Angry</span>
           <span class="mood-chip-visual"><img src="images/nervous.jpg" width="160"><br>Nervous</span>
         </div>
+        <hr style="margin:30px 0;">
+        <h3 style="margin-bottom:15px;">Mood History</h3>
+        <div id="mood-history-container">
+        <p>Loading mood history...</p>
+        </div>
+        <div class="card">
+        <h3>🎵 Song of the Day</h3>
+        <iframe id="songFrame"
+            width="100%"
+            height="200"
+            src=""
+            frameborder="0"
+            allowfullscreen>
+        </iframe>
+        </div>
       </div>
     </div>
-
   </main>
 </div>
 
@@ -1072,6 +1109,65 @@ function addNewCourseTask() {
     renderAll();
     clearTaskForm();
   }
+  function loadMoodHistory() {
+    fetch('loginRelated/get_mood_history.php')
+        .then(response => response.json())
+        .then(data => {
+            let container = document.getElementById('mood-history-container');
+            if(data.length === 0){
+                container.innerHTML =
+                    "<p>No mood history available.</p>";
+                return;
+            }
+            let html = `
+                <table style="width:100%; border-collapse:collapse;">
+                    <tr>
+                        <th>Date</th>
+                        <th>Mood</th>
+                    </tr>
+            `;
+            data.forEach(item => {
+                html += `
+                    <tr>
+                        <td style="padding:10px; border:1px solid #ddd;">
+                            ${item.log_date}
+                        </td>
+
+                        <td style="padding:10px; border:1px solid #ddd;">
+                            ${item.mood}
+                        </td>
+                    </tr>
+                `;
+            });
+            html += "</table>";
+            container.innerHTML = html;
+        });
+}
+   
+  // SONG OF THE DAY
+  const songs = [
+    "https://www.youtube.com/embed/yJYXItns2ik", // Count on Me
+    "https://www.youtube.com/embed/ZbZSe6N_BXs", // Happy
+    "https://www.youtube.com/embed/450p7goxZqg"  // See You Again
+  ];
+
+    const today = new Date().getDate();
+    document.getElementById("songFrame").src =
+    songs[today % songs.length];
+
+
+  // QUOTE OF THE DAY
+    const quotes = [
+    "Believe you can and you're halfway there.",
+    "Small progress is still progress.",
+    "Take care of yourself. You deserve it.",
+    "Every day is a fresh start.",
+    "Your mental health matters."
+  ];
+
+document.getElementById("dailyQuote").textContent =
+  quotes[today % quotes.length];
+
 }
     function updateDate() {
         const dateElement = document.getElementById("currentDate");
