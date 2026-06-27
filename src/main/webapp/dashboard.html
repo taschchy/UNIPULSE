@@ -473,17 +473,19 @@
             <!-- Song of the Day -->
             <div class="widget-section">
             <div class="rc-title">
-            🎵 Song of the Day
+            🎵 Get UR Song Of the Day
           </div>
+          <div style="display:flex; justify-content:center;">
           <iframe
             id="songFrame"
-            src="https://open.spotify.com/embed/playlist/0OAnyLL0M3pM8dg056MTss?utm_source=generator&si=0a7b40bb8d0344d3"
-            width="100%"
+            src="https://open.spotify.com/embed/playlist/0OAnyLL0M3pM8dg056MTss?utm_source=generator&si=bb1eca2e49fe4dfb"
+            width="105%"
             height="352"
             frameborder="0"
             allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
              loading="lazy">
             </iframe>
+          </div>
           </div>
 
           <!-- Quote of the Day -->
@@ -553,7 +555,8 @@
             </div>
           </div>
         </div>
-       
+        </div>
+    </div>
 
     <!-- Supplementary Screens (Dynamic Navigation Compatible) -->
     <div id="page-schedule" class="page-view" style="display: none; padding: 24px;">
@@ -614,16 +617,6 @@
         <h3 style="margin-bottom:15px;">Mood History</h3>
         <div id="mood-history-container">
         <p>Loading mood history...</p>
-        </div>
-        <div class="card">
-        <h3>🎵 Song of the Day</h3>
-        <iframe id="songFrame"
-            width="100%"
-            height="200"
-            src=""
-            frameborder="0"
-            allowfullscreen>
-        </iframe>
         </div>
       </div>
     </div>
@@ -920,9 +913,23 @@ document.querySelectorAll('.mood-chip').forEach(chip => {
 
 document.querySelectorAll('.mood-chip-visual').forEach(chip => {
   chip.addEventListener('click', () => {
-    document.querySelectorAll('.mood-chip-visual').forEach(c => c.classList.remove('sel'));
+    document.querySelectorAll('.mood-chip-visual')
+      .forEach(c => c.classList.remove('sel'));
     chip.classList.add('sel');
-    document.getElementById('srs-cbt-text').innerText = "You selected: " + chip.innerText.trim();
+    const mood = chip.innerText.trim();
+    updateMetric('mood', mood);
+    fetch('loginRelated/save_mood.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ mood: mood })
+    })
+    .then(response => response.json())
+    .then(data => {
+      loadMoodHistory();
+    })
+    .catch(err => console.log(err));
   });
 });
 
@@ -933,7 +940,7 @@ document.querySelectorAll('.tl-day').forEach(dayBtn => {
   });
 });
 
-loadDashboardFromDatabase();
+
 
 // ========================================================
 // 5. EXTENDED RENDERING & EVENT CONTROLLERS FOR VIEW SCREEN SYNC
@@ -1109,7 +1116,8 @@ function addNewCourseTask() {
     renderAll();
     clearTaskForm();
   }
-  function loadMoodHistory() {
+}
+function loadMoodHistory() {
     fetch('loginRelated/get_mood_history.php')
         .then(response => response.json())
         .then(data => {
@@ -1143,32 +1151,24 @@ function addNewCourseTask() {
             container.innerHTML = html;
         });
 }
-   
-  // SONG OF THE DAY
-  const songs = [
-    "https://www.youtube.com/embed/yJYXItns2ik", // Count on Me
-    "https://www.youtube.com/embed/ZbZSe6N_BXs", // Happy
-    "https://www.youtube.com/embed/450p7goxZqg"  // See You Again
-  ];
+  // QUOTE OF THE DAY
+    window.onload = function() {
+
+    const quotes = [
+      "Believe you can and you're halfway there.",
+      "Small progress is still progress.",
+      "Take care of yourself. You deserve it.",
+      "Every day is a fresh start.",
+      "Your mental health matters."
+    ];
 
     const today = new Date().getDate();
-    document.getElementById("songFrame").src =
-    songs[today % songs.length];
+
+    document.getElementById("dailyQuote").textContent =
+      quotes[today % quotes.length];
+};
 
 
-  // QUOTE OF THE DAY
-    const quotes = [
-    "Believe you can and you're halfway there.",
-    "Small progress is still progress.",
-    "Take care of yourself. You deserve it.",
-    "Every day is a fresh start.",
-    "Your mental health matters."
-  ];
-
-document.getElementById("dailyQuote").textContent =
-  quotes[today % quotes.length];
-
-}
     function updateDate() {
         const dateElement = document.getElementById("currentDate");
 
@@ -1183,6 +1183,8 @@ document.getElementById("dailyQuote").textContent =
             new Date().toLocaleDateString('en-US', options);
     }
     updateDate();
+    loadDashboardFromDatabase();
+    loadMoodHistory();
 </script>
 </body>
 </html>
