@@ -912,25 +912,22 @@ document.querySelectorAll('.mood-chip').forEach(chip => {
 });
 
 document.querySelectorAll('.mood-chip-visual').forEach(chip => {
-  chip.addEventListener('click', () => {
-    document.querySelectorAll('.mood-chip-visual')
-      .forEach(c => c.classList.remove('sel'));
-    chip.classList.add('sel');
-    const mood = chip.innerText.trim();
-    updateMetric('mood', mood);
-    fetch('loginRelated/save_mood.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ mood: mood })
-    })
-    .then(response => response.json())
-    .then(data => {
-      loadMoodHistory();
-    })
-    .catch(err => console.log(err));
-  });
+    chip.addEventListener('click', () => {
+
+        document.querySelectorAll('.mood-chip-visual')
+            .forEach(c => c.classList.remove('sel'));
+
+        chip.classList.add('sel');
+
+        const mood = chip.innerText.trim();
+
+        updateMetric('mood', mood);
+
+        setTimeout(() => {
+            loadMoodHistory();
+        }, 500);
+
+    });
 });
 
 document.querySelectorAll('.tl-day').forEach(dayBtn => {
